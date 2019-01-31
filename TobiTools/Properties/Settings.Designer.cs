@@ -190,5 +190,17 @@ namespace TobiTools.Properties {
                 this["z2Orient"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("images")]
+        public string ImgFolder {
+            get {
+                return ((string)(this["ImgFolder"]));
+            }
+            set {
+                this["ImgFolder"] = value;
+            }
+        }
     }
 }

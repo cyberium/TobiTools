@@ -8,16 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using TobiTools.Properties;
+using System.Globalization;
 
 namespace TobiTools
 {
     public partial class Form1 : Form
     {
+        Dictionary<int, Object> ObjectsList = new Dictionary<int, Object>();
+        NumberStyles NumStyle = System.Globalization.NumberStyles.AllowDecimalPoint;
+        CultureInfo Culture = CultureInfo.InvariantCulture;
+
+        int BaseID = 1;
         public Form1()
         {
             InitializeComponent();
             LoadSettings();
+            Initialize();
         }
 
         private void LoadSettings()
@@ -30,13 +38,6 @@ namespace TobiTools
             yDestTBX.Text   = Settings.Default.yDest;
             zDestTBX.Text   = Settings.Default.zDest;
             oDestTBX.Text   = Settings.Default.oDest;
-
-            x1OrientTBX.Text = Settings.Default.x1Orient;
-            y1OrientTBX.Text = Settings.Default.y1Orient;
-            z1OrientTBX.Text = Settings.Default.z1Orient;
-            x2OrientTBX.Text = Settings.Default.x2Orient;
-            y2OrientTBX.Text = Settings.Default.y2Orient;
-            z2OrientTBX.Text = Settings.Default.z2Orient;
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -49,14 +50,23 @@ namespace TobiTools
             Settings.Default.yDest = yDestTBX.Text;
             Settings.Default.zDest = zDestTBX.Text;
             Settings.Default.oDest = oDestTBX.Text;
-
-            Settings.Default.x1Orient = x1OrientTBX.Text;
-            Settings.Default.y1Orient = y1OrientTBX.Text;
-            Settings.Default.z1Orient = z1OrientTBX.Text;
-            Settings.Default.x2Orient = x2OrientTBX.Text;
-            Settings.Default.y2Orient = y2OrientTBX.Text;
-            Settings.Default.z2Orient = z2OrientTBX.Text;
             Settings.Default.Save();
+        }
+
+        private void Initialize()
+        {
+            MainDrawPB.Image = new Bitmap(380, 380);
+            ObjectsList.Add(0, new Master());
+            MainDataDGV.ColumnCount = 3;
+            MainDataDGV.Columns[0].Name = "Id";
+            MainDataDGV.Columns[1].Name = "Angle";
+            MainDataDGV.Columns[2].Name = "Dist";
+
+            MainDataDGV.Columns[0].Width = 50;
+            MainDataDGV.Columns[1].Width = 100;
+            MainDataDGV.Columns[2].Width = 100;
+            MainDataDGV.Rows[0].Tag = BaseID++ ;
+
         }
 
         private void TextBox_Enter(object sender, EventArgs e)
@@ -121,48 +131,160 @@ namespace TobiTools
             angleResultTBX.Text = degrees.ToString();
         }
 
-        private void ComputeOriBut_Click(object sender, EventArgs e)
+        private void MainTimer_Tick(object sender, EventArgs e)
         {
-            float xOri, yOri, zOri;
-            float xDest, yDest, zDest;
-            if (!float.TryParse(x1OrientTBX.Text, out xOri))
+            /*Image image = MainDrawPB.Image;
+
+            foreach(var item in ObjectsList)
             {
-                MessageBox.Show("x1 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!float.TryParse(y1OrientTBX.Text, out yOri))
-            {
-                MessageBox.Show("y1 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!float.TryParse(z1OrientTBX.Text, out zOri))
-            {
-                MessageBox.Show("z1 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!float.TryParse(x2OrientTBX.Text, out xDest))
-            {
-                MessageBox.Show("x2 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!float.TryParse(y2OrientTBX.Text, out yDest))
-            {
-                MessageBox.Show("y2 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if (!float.TryParse(z2OrientTBX.Text, out zDest))
-            {
-                MessageBox.Show("z2 is not valid", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                item.Value.Render(Graphics.FromImage(image));
             }
 
-            Vector3 p1 = new Vector3(xOri, yOri, zOri);
-            Vector3 p2 = new Vector3(xDest, yDest, zDest);
-            double angle = Math.PI - Math.Atan2(p1.Y - p2.Y, p1.X - p2.X) + (Math.PI/2);
-            double degrees = ((180 / Math.PI) * angle);
-            degrees = (degrees + 360) % 360;
-            orientationResDegTBX.Text = degrees.ToString();
-            orientationResRadTBX.Text = angle.ToString();
+            MainDrawPB.Refresh();*/
+        }
+
+        private bool ValidateFloat(String valueStr, out float value)
+        {
+            value = -1;
+            if (!Regex.IsMatch(valueStr, @"^[0-9]*(?:\.[0-9]*)?$"))
+                return false;
+
+            if (!float.TryParse(valueStr, NumStyle, Culture, out value))
+                return false;
+
+            return true;
+        }
+
+        private bool ValidateInt(String valueStr, out int value)
+        {
+            value = -1;
+            if (!Regex.IsMatch(valueStr, @"^[0-9]*$"))
+                return false;
+
+            if (!int.TryParse(valueStr, out value))
+                return false;
+
+            return true;
+        }
+
+        public static Vector2 Rotate(Vector2 v, float degrees)
+        {
+            double sin = Math.Sin(degrees * (Math.PI / 180));
+            double cos = Math.Cos(degrees * (Math.PI / 180));
+
+            float tx = v.X;
+            float ty = v.Y;
+            v.X = (float) ((cos * tx) - (sin * ty));
+            v.Y = (float) ((sin * tx) + (cos * ty));
+            return v;
+        }
+
+        private void AddObject(int idx, float angle, float dist)
+        {
+            Slave slave = null;
+            Object obj = null;
+            Point pos = new Point();
+            if (!ObjectsList.TryGetValue(idx, out obj))
+                slave = new Slave(pos);
+            else
+                slave = obj as Slave;
+
+            Vector2 orig = new Vector2(0, dist * 20);
+            Vector2 rotPos = Rotate(orig, angle);
+            Vector2 finalPoint = rotPos;
+
+            int x, y;
+            x = Convert.ToInt32(finalPoint.X);
+            y = Convert.ToInt32(finalPoint.Y);
+
+            slave.SetScreenPosition(new Point(x, y));
+            if (obj == null)
+                ObjectsList.Add(idx, slave);
+
+            MainDrawPB.Invalidate();
+        }
+
+        private void RemoveObject(int idx)
+        {
+            if (ObjectsList.Remove(idx))
+                MainDrawPB.Invalidate();
+        }
+
+        private void MainDataDGV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            int id = -1;
+            float angle = -1;
+            float dist = -1;
+
+            DataGridViewRow currRow = MainDataDGV.CurrentRow;
+            foreach (DataGridViewCell cell in currRow.Cells)
+            {
+                switch (cell.ColumnIndex)
+                {
+                    case 0:
+                        if (cell.Value == null)
+                            continue;
+                        if (cell.Value == null || !ValidateInt(cell.Value.ToString(), out id))
+                            cell.Style.BackColor = Color.IndianRed;
+                        else
+                            cell.Style.BackColor = Color.LawnGreen;
+                        break;
+
+                    case 1:
+                        if (cell.Value == null)
+                            continue;
+                        if (cell.Value == null || !ValidateFloat(cell.Value.ToString(), out angle))
+                            cell.Style.BackColor = Color.IndianRed;
+                        else
+                            cell.Style.BackColor = Color.LawnGreen;
+                        break;
+
+                    case 2:
+                        if (cell.Value == null)
+                            continue;
+                        if (cell.Value == null || !ValidateFloat(cell.Value.ToString(), out dist))
+                            cell.Style.BackColor = Color.IndianRed;
+                        else
+                            cell.Style.BackColor = Color.LawnGreen;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            if (id >= 0 && angle >= 0 && dist >= 0)
+            {
+                foreach (DataGridViewCell cell in currRow.Cells)
+                    cell.Style.BackColor = Color.Green;
+
+                AddObject((int)currRow.Tag, angle, dist);
+            }
+            else
+            {
+                if (currRow.Tag != null)
+                    RemoveObject((int)currRow.Tag);
+            }
+        }
+
+        private void MainDrawPB_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.Clear(MainDrawPB.BackColor);
+
+            foreach (var item in ObjectsList)
+            {
+                item.Value.Render(e.Graphics);
+            }
+        }
+
+        private void MainDataDGV_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            RemoveObject((int)e.Row.Tag);
+        }
+
+        private void MainDataDGV_UserAddedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Tag = BaseID++;
         }
     }
 }

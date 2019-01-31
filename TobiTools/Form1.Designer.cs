@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.xOriginTBX = new System.Windows.Forms.TextBox();
             this.yOriginTBX = new System.Windows.Forms.TextBox();
             this.zOriginTBX = new System.Windows.Forms.TextBox();
@@ -54,28 +55,15 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.x1OrientTBX = new System.Windows.Forms.TextBox();
-            this.y1OrientTBX = new System.Windows.Forms.TextBox();
-            this.z1OrientTBX = new System.Windows.Forms.TextBox();
-            this.x2OrientTBX = new System.Windows.Forms.TextBox();
-            this.y2OrientTBX = new System.Windows.Forms.TextBox();
-            this.z2OrientTBX = new System.Windows.Forms.TextBox();
-            this.ComputeOriBut = new System.Windows.Forms.Button();
-            this.orientationResRadTBX = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.orientationResDegTBX = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.MainDataDGV = new System.Windows.Forms.DataGridView();
+            this.MainDrawPB = new System.Windows.Forms.PictureBox();
+            this.MainTimer = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).BeginInit();
             this.SuspendLayout();
             // 
             // xOriginTBX
@@ -286,10 +274,11 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(487, 166);
+            this.tabControl1.Size = new System.Drawing.Size(712, 417);
             this.tabControl1.TabIndex = 23;
             // 
             // tabPage1
@@ -320,202 +309,65 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(479, 140);
+            this.tabPage1.Size = new System.Drawing.Size(704, 391);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Dist/Angle";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.label22);
-            this.tabPage2.Controls.Add(this.orientationResDegTBX);
-            this.tabPage2.Controls.Add(this.label21);
-            this.tabPage2.Controls.Add(this.label20);
-            this.tabPage2.Controls.Add(this.label19);
-            this.tabPage2.Controls.Add(this.label16);
-            this.tabPage2.Controls.Add(this.label17);
-            this.tabPage2.Controls.Add(this.label18);
-            this.tabPage2.Controls.Add(this.label13);
-            this.tabPage2.Controls.Add(this.label14);
-            this.tabPage2.Controls.Add(this.label15);
-            this.tabPage2.Controls.Add(this.orientationResRadTBX);
-            this.tabPage2.Controls.Add(this.ComputeOriBut);
-            this.tabPage2.Controls.Add(this.z2OrientTBX);
-            this.tabPage2.Controls.Add(this.y2OrientTBX);
-            this.tabPage2.Controls.Add(this.x2OrientTBX);
-            this.tabPage2.Controls.Add(this.z1OrientTBX);
-            this.tabPage2.Controls.Add(this.y1OrientTBX);
-            this.tabPage2.Controls.Add(this.x1OrientTBX);
+            this.tabPage2.Controls.Add(this.button2);
+            this.tabPage2.Controls.Add(this.MainDataDGV);
+            this.tabPage2.Controls.Add(this.MainDrawPB);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(479, 140);
+            this.tabPage2.Size = new System.Drawing.Size(704, 391);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Orientation";
+            this.tabPage2.Text = "Visual Formation";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // x1OrientTBX
+            // button2
             // 
-            this.x1OrientTBX.Location = new System.Drawing.Point(25, 20);
-            this.x1OrientTBX.Name = "x1OrientTBX";
-            this.x1OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.x1OrientTBX.TabIndex = 0;
+            this.button2.Location = new System.Drawing.Point(393, 296);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(305, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
             // 
-            // y1OrientTBX
+            // MainDataDGV
             // 
-            this.y1OrientTBX.Location = new System.Drawing.Point(25, 46);
-            this.y1OrientTBX.Name = "y1OrientTBX";
-            this.y1OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.y1OrientTBX.TabIndex = 1;
+            this.MainDataDGV.Location = new System.Drawing.Point(392, 6);
+            this.MainDataDGV.Name = "MainDataDGV";
+            this.MainDataDGV.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.IndianRed;
+            this.MainDataDGV.Size = new System.Drawing.Size(306, 283);
+            this.MainDataDGV.TabIndex = 1;
+            this.MainDataDGV.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainDataDGV_CellEndEdit);
+            this.MainDataDGV.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.MainDataDGV_UserAddedRow);
+            this.MainDataDGV.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.MainDataDGV_UserDeletingRow);
             // 
-            // z1OrientTBX
+            // MainDrawPB
             // 
-            this.z1OrientTBX.Location = new System.Drawing.Point(25, 72);
-            this.z1OrientTBX.Name = "z1OrientTBX";
-            this.z1OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.z1OrientTBX.TabIndex = 2;
+            this.MainDrawPB.BackColor = System.Drawing.Color.DarkSlateGray;
+            this.MainDrawPB.Location = new System.Drawing.Point(6, 6);
+            this.MainDrawPB.Name = "MainDrawPB";
+            this.MainDrawPB.Size = new System.Drawing.Size(380, 380);
+            this.MainDrawPB.TabIndex = 0;
+            this.MainDrawPB.TabStop = false;
+            this.MainDrawPB.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDrawPB_Paint);
             // 
-            // x2OrientTBX
+            // MainTimer
             // 
-            this.x2OrientTBX.Location = new System.Drawing.Point(160, 20);
-            this.x2OrientTBX.Name = "x2OrientTBX";
-            this.x2OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.x2OrientTBX.TabIndex = 3;
-            // 
-            // y2OrientTBX
-            // 
-            this.y2OrientTBX.Location = new System.Drawing.Point(160, 46);
-            this.y2OrientTBX.Name = "y2OrientTBX";
-            this.y2OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.y2OrientTBX.TabIndex = 4;
-            // 
-            // z2OrientTBX
-            // 
-            this.z2OrientTBX.Location = new System.Drawing.Point(160, 72);
-            this.z2OrientTBX.Name = "z2OrientTBX";
-            this.z2OrientTBX.Size = new System.Drawing.Size(100, 20);
-            this.z2OrientTBX.TabIndex = 5;
-            // 
-            // ComputeOriBut
-            // 
-            this.ComputeOriBut.Location = new System.Drawing.Point(343, 20);
-            this.ComputeOriBut.Name = "ComputeOriBut";
-            this.ComputeOriBut.Size = new System.Drawing.Size(75, 23);
-            this.ComputeOriBut.TabIndex = 6;
-            this.ComputeOriBut.Text = "Compute";
-            this.ComputeOriBut.UseVisualStyleBackColor = true;
-            this.ComputeOriBut.Click += new System.EventHandler(this.ComputeOriBut_Click);
-            // 
-            // orientationResRadTBX
-            // 
-            this.orientationResRadTBX.Location = new System.Drawing.Point(343, 49);
-            this.orientationResRadTBX.Name = "orientationResRadTBX";
-            this.orientationResRadTBX.Size = new System.Drawing.Size(100, 20);
-            this.orientationResRadTBX.TabIndex = 7;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(5, 73);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(14, 13);
-            this.label13.TabIndex = 20;
-            this.label13.Text = "Z";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(5, 47);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(14, 13);
-            this.label14.TabIndex = 19;
-            this.label14.Text = "Y";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(5, 23);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(14, 13);
-            this.label15.TabIndex = 18;
-            this.label15.Text = "X";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(140, 73);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(14, 13);
-            this.label16.TabIndex = 23;
-            this.label16.Text = "Z";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(140, 47);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(14, 13);
-            this.label17.TabIndex = 22;
-            this.label17.Text = "Y";
-            // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(140, 23);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(14, 13);
-            this.label18.TabIndex = 21;
-            this.label18.Text = "X";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(279, 52);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(60, 13);
-            this.label19.TabIndex = 24;
-            this.label19.Text = "Ori. Radian";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(22, 4);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(34, 13);
-            this.label20.TabIndex = 25;
-            this.label20.Text = "Origin";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(157, 4);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(60, 13);
-            this.label21.TabIndex = 26;
-            this.label21.Text = "Destination";
-            // 
-            // orientationResDegTBX
-            // 
-            this.orientationResDegTBX.Location = new System.Drawing.Point(343, 75);
-            this.orientationResDegTBX.Name = "orientationResDegTBX";
-            this.orientationResDegTBX.Size = new System.Drawing.Size(100, 20);
-            this.orientationResDegTBX.TabIndex = 27;
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(279, 78);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(61, 13);
-            this.label22.TabIndex = 28;
-            this.label22.Text = "Ori. Degree";
+            this.MainTimer.Enabled = true;
+            this.MainTimer.Tick += new System.EventHandler(this.MainTimer_Tick);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Pink;
-            this.ClientSize = new System.Drawing.Size(511, 189);
+            this.ClientSize = new System.Drawing.Size(712, 417);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
             this.Text = "Tobi Tools";
@@ -524,7 +376,8 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -557,25 +410,10 @@
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox orientationResRadTBX;
-        private System.Windows.Forms.Button ComputeOriBut;
-        private System.Windows.Forms.TextBox z2OrientTBX;
-        private System.Windows.Forms.TextBox y2OrientTBX;
-        private System.Windows.Forms.TextBox x2OrientTBX;
-        private System.Windows.Forms.TextBox z1OrientTBX;
-        private System.Windows.Forms.TextBox y1OrientTBX;
-        private System.Windows.Forms.TextBox x1OrientTBX;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.TextBox orientationResDegTBX;
-        private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.PictureBox MainDrawPB;
+        private System.Windows.Forms.Timer MainTimer;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.DataGridView MainDataDGV;
     }
 }
 
