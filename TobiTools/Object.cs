@@ -11,78 +11,88 @@ namespace TobiTools
 {
     public abstract class Object
     {
-        protected WowCoordinates coord = new WowCoordinates();
-
+        protected Image masterImg = null;
+        protected WowCoordinates coord;
         protected Rectangle BoundingBox;
+        protected Point ScreenStartPos;
 
         public abstract void Render(Graphics g);
+        public bool Contain(Point point)
+        {
+            return BoundingBox.Contains(point);
+        }
+
+        protected void _SetScreenPosition(Point pos)
+        {
+            ScreenStartPos.X = WowCoordinates.ClientXOffset - (masterImg.Width / 2) + pos.X;
+            ScreenStartPos.Y = WowCoordinates.ClientYOffset - (masterImg.Height / 2) - pos.Y;
+            Point rectPos = new Point(pos.X - masterImg.Width / 2, pos.Y - masterImg.Height / 2);
+            BoundingBox.Location = rectPos;
+            BoundingBox.Height = masterImg.Height;
+            BoundingBox.Width = masterImg.Width;
+        }
     }
 
     public class Unit : Object
     {
-        protected Image masterImg = null;
-
-        public Unit(string fileName)
+        public Unit(string fileName, Size screenSize)
         {
             string file = Settings.Default.ImgFolder + Path.DirectorySeparatorChar + fileName;
 
 
             masterImg = Image.FromFile(file);
+
+            if (masterImg == null)
+                return;
+
+            coord = new WowCoordinates(screenSize.Width, screenSize.Height);
         }
 
         public override void Render(Graphics g)
         {
             if (masterImg == null)
                 return;
+            g.DrawImage(masterImg, ScreenStartPos);
 
-            g.DrawImage(masterImg, coord.GetScreenCoord());
+            /*Rectangle rect = BoundingBox;
+            rect.X += WowCoordinates.ClientXOffset;
+            rect.Y = WowCoordinates.ClientYOffset - rect.Y - BoundingBox.Height;
+            g.DrawRectangle(Pens.Pink, rect);*/
         }
     }
 
     public class Master : Unit
     {
-        public Master()
-            : base("master.png")
+        public Master(Size screenSize)
+            : base("master.png", screenSize)
         {
             if (masterImg == null)
                 return;
-
-            coord.SetScreenPosition(new Point(0, 0));
-            Point rectPos = new Point(0 - masterImg.Width / 2, 0 - masterImg.Height / 2);
-            BoundingBox.Location = rectPos;
-            BoundingBox.Height = masterImg.Height;
-            BoundingBox.Width = masterImg.Width;
+            _SetScreenPosition(new Point(0, 0));
         }
     }
 
     public class Slave : Unit
     {
-        public Slave(Point pos)
-            : base("slave.png")
+        public Slave(Size screenSize)
+            : base("slave.png", screenSize)
         {
             if (masterImg == null)
                 return;
-
-            coord.SetScreenPosition(pos);
-            Point rectPos = new Point(pos.X - masterImg.Width / 2, pos.Y - masterImg.Height / 2);
-            BoundingBox.Location = rectPos;
-            BoundingBox.Height = masterImg.Height;
-            BoundingBox.Width = masterImg.Width;
+            _SetScreenPosition(new Point(0, 0));
         }
 
         public void SetScreenPosition(Point newPos)
         {
             coord.SetScreenPosition(newPos);
-            Point rectPos = new Point(newPos.X - masterImg.Width / 2, newPos.Y - masterImg.Height / 2);
-            BoundingBox.Location = rectPos;
+            _SetScreenPosition(newPos);
         }
 
-        public void SetGamePosition(PointF newPos)
+        public void SetGamePosition(PointF pos)
         {
-            coord.SetGamePosition(newPos);
-            Point pos = coord.GetScreenCoord();
-            Point rectPos = new Point(pos.X - masterImg.Width / 2, pos.Y - masterImg.Height / 2);
-            BoundingBox.Location = rectPos;
+            coord.SetGamePosition(pos);
+            Point newPos = coord.GetScreenCoord();
+            _SetScreenPosition(new Point(0, 0));
         }
     }
 }

@@ -19,6 +19,8 @@ namespace TobiTools
         Dictionary<int, Object> ObjectsList = new Dictionary<int, Object>();
         NumberStyles NumStyle = System.Globalization.NumberStyles.AllowDecimalPoint;
         CultureInfo Culture = CultureInfo.InvariantCulture;
+        bool tooltipsShow = false;
+        Rectangle ToolTipsRectangle = new Rectangle();
 
         int BaseID = 1;
         public Form1()
@@ -55,8 +57,8 @@ namespace TobiTools
 
         private void Initialize()
         {
-            MainDrawPB.Image = new Bitmap(380, 380);
-            ObjectsList.Add(0, new Master());
+            MainDrawPB.Image = new Bitmap(MainDrawPB.ClientSize.Width, MainDrawPB.ClientSize.Height);
+            ObjectsList.Add(0, new Master(MainDrawPB.ClientSize));
             MainDataDGV.ColumnCount = 3;
             MainDataDGV.Columns[0].Name = "Id";
             MainDataDGV.Columns[1].Name = "Angle";
@@ -67,6 +69,8 @@ namespace TobiTools
             MainDataDGV.Columns[2].Width = 100;
             MainDataDGV.Rows[0].Tag = BaseID++ ;
 
+            ToolTipsRectangle.Height = 50;
+            ToolTipsRectangle.Width = 100;
         }
 
         private void TextBox_Enter(object sender, EventArgs e)
@@ -185,7 +189,7 @@ namespace TobiTools
             Object obj = null;
             Point pos = new Point();
             if (!ObjectsList.TryGetValue(idx, out obj))
-                slave = new Slave(pos);
+                slave = new Slave(MainDrawPB.ClientSize);
             else
                 slave = obj as Slave;
 
@@ -275,6 +279,11 @@ namespace TobiTools
             {
                 item.Value.Render(e.Graphics);
             }
+
+            if (tooltipsShow)
+            {
+                e.Graphics.FillRectangle(Brushes.Coral, ToolTipsRectangle);
+            }
         }
 
         private void MainDataDGV_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -285,6 +294,36 @@ namespace TobiTools
         private void MainDataDGV_UserAddedRow(object sender, DataGridViewRowEventArgs e)
         {
             e.Row.Tag = BaseID++;
+        }
+
+        private void ShowTooltips()
+        {
+
+        }
+
+        private void HideTooltips()
+        {
+
+        }
+
+        private void MainDrawPB_MouseMove(object sender, MouseEventArgs e)
+        {
+            foreach (var item in ObjectsList)
+            {
+                Point screenLoc = new Point(e.X - WowCoordinates.ClientXOffset, -(e.Y - WowCoordinates.ClientYOffset));
+                Console.WriteLine("MousePos= " + screenLoc.ToString() + " also " + e.Location.ToString());
+                if (item.Value.Contain(screenLoc))
+                {
+                    ToolTipsRectangle.X = e.X;
+                    ToolTipsRectangle.Y = e.Y - ToolTipsRectangle.Height;
+                    tooltipsShow = true;
+                    MainDrawPB.Invalidate();
+                    return;
+                }
+            }
+
+            tooltipsShow = false;
+            MainDrawPB.Invalidate();
         }
     }
 }

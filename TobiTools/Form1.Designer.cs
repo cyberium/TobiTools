@@ -356,6 +356,7 @@
             this.MainDrawPB.TabIndex = 0;
             this.MainDrawPB.TabStop = false;
             this.MainDrawPB.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDrawPB_Paint);
+            this.MainDrawPB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDrawPB_MouseMove);
             // 
             // MainTimer
             // 

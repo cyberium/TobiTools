@@ -10,21 +10,36 @@ namespace TobiTools
         static public float MapSize = TileNum * TileGameSize;
         static public float MaxMapCoord = MapSize / 2.0F;
 
+        static public int ScreenSizeW = 380;
+        static public int ScreenSizeH = 380;
+
         private float xRatio = 1;
         private float yRatio = 1;
         private int m_currentTx = 0;
         private int m_currentTy = 0;
         private Point screenCoord;
         private PointF GameCoord;
-        private int ClientXOffset;
-        private int ClientYOffset;
+        static public int ClientXOffset = 190;
+        static public int ClientYOffset = 190;
 
-        public WowCoordinates(int width = 380, int height = 380)
+        public WowCoordinates(int width = 0, int height = 0)
         {
-            ClientXOffset = width / 2;
-            ClientYOffset = height / 2;
-            xRatio = MapSize / width;
-            yRatio = MapSize / height;
+            if (width > 0 && height > 0)
+            {
+                ClientXOffset = width / 2;
+                ClientYOffset = height / 2;
+
+                xRatio = MapSize / width;
+                yRatio = MapSize / height;
+            }
+            else
+            {
+                ClientXOffset = ScreenSizeW / 2;
+                ClientYOffset = ScreenSizeH / 2;
+
+                xRatio = MapSize / ScreenSizeW;
+                yRatio = MapSize / ScreenSizeH;
+            }
             SetScreenPosition(new Point(0 , 0));
         }
 
