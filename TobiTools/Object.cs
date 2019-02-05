@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Drawing;
 using TobiTools.Properties;
 using System.IO;
@@ -15,6 +16,9 @@ namespace TobiTools
         protected WowCoordinates coord;
         protected Rectangle BoundingBox;
         protected Point ScreenStartPos;
+        protected DataGridViewRow linkedRow;
+        static public int ClientXOffset = 190;
+        static public int ClientYOffset = 190;
 
         public abstract void Render(Graphics g);
         public bool Contain(Point point)
@@ -22,10 +26,27 @@ namespace TobiTools
             return BoundingBox.Contains(point);
         }
 
+        public string GetGameCoord()
+        {
+            if (coord != null)
+                return coord.GetGameCoord().ToString();
+            return "Invalid";
+        }
+
+        public void SetBaseGamePos(float x, float y, float o)
+        {
+            coord.SetBaseGamePos(x, y, o);
+        }
+
+        public void SetLinkedRow(DataGridViewRow row) { linkedRow = row; }
+        public DataGridViewRow GetLinkedRow() { return linkedRow; }
+
+        public abstract string GetName();
+
         protected void _SetScreenPosition(Point pos)
         {
-            ScreenStartPos.X = WowCoordinates.ClientXOffset - (masterImg.Width / 2) + pos.X;
-            ScreenStartPos.Y = WowCoordinates.ClientYOffset - (masterImg.Height / 2) - pos.Y;
+            ScreenStartPos.X = ClientXOffset - (masterImg.Width / 2) + pos.X;
+            ScreenStartPos.Y = ClientYOffset - (masterImg.Height / 2) - pos.Y;
             Point rectPos = new Point(pos.X - masterImg.Width / 2, pos.Y - masterImg.Height / 2);
             BoundingBox.Location = rectPos;
             BoundingBox.Height = masterImg.Height;
@@ -33,7 +54,7 @@ namespace TobiTools
         }
     }
 
-    public class Unit : Object
+    public abstract class Unit : Object
     {
         public Unit(string fileName, Size screenSize)
         {
@@ -45,7 +66,7 @@ namespace TobiTools
             if (masterImg == null)
                 return;
 
-            coord = new WowCoordinates(screenSize.Width, screenSize.Height);
+            coord = new WowCoordinates();
         }
 
         public override void Render(Graphics g)
@@ -70,6 +91,9 @@ namespace TobiTools
                 return;
             _SetScreenPosition(new Point(0, 0));
         }
+
+        public override string GetName() { return "Master"; }
+
     }
 
     public class Slave : Unit
@@ -81,6 +105,7 @@ namespace TobiTools
                 return;
             _SetScreenPosition(new Point(0, 0));
         }
+        public override string GetName() { return "Slave"; }
 
         public void SetScreenPosition(Point newPos)
         {

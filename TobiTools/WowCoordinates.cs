@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Numerics;
 
 namespace TobiTools
 {
@@ -18,46 +19,82 @@ namespace TobiTools
         private int m_currentTx = 0;
         private int m_currentTy = 0;
         private Point screenCoord;
+        private Point VirtualCoord;
         private PointF GameCoord;
-        static public int ClientXOffset = 190;
-        static public int ClientYOffset = 190;
+        private PointF BasePoint;
+        private float BasePointO = 0;
 
-        public WowCoordinates(int width = 0, int height = 0)
+        public int ClientRatio = 10;
+
+        public WowCoordinates()
         {
-            if (width > 0 && height > 0)
-            {
-                ClientXOffset = width / 2;
-                ClientYOffset = height / 2;
-
-                xRatio = MapSize / width;
-                yRatio = MapSize / height;
-            }
-            else
-            {
-                ClientXOffset = ScreenSizeW / 2;
-                ClientYOffset = ScreenSizeH / 2;
-
-                xRatio = MapSize / ScreenSizeW;
-                yRatio = MapSize / ScreenSizeH;
-            }
+            BasePoint = new Point(0, 0);
             SetScreenPosition(new Point(0 , 0));
+        }
+
+        public void SetBaseGamePos(float x, float y, float o)
+        {
+            BasePoint.X = x;
+            BasePoint.Y = y;
+            BasePointO = o;
+            RefreshGamePos();
+        }
+
+        /// <summary>
+        /// Rotates one point around another
+        /// </summary>
+        /// <param name="pointToRotate">The point to rotate.</param>
+        /// <param name="centerPoint">The center point of rotation.</param>
+        /// <param name="angleInDegrees">The rotation angle in degrees.</param>
+        /// <returns>Rotated point</returns>
+        static PointF RotatePoint(PointF pointToRotate, PointF centerPoint, float angleInDegrees)
+        {
+            double angleInRadians = angleInDegrees * (Math.PI / 180);
+            double cosTheta = Math.Cos(angleInRadians);
+            double sinTheta = Math.Sin(angleInRadians);
+            return new PointF
+            {
+                X =
+                (float)
+                    (cosTheta * (pointToRotate.X - centerPoint.X) -
+                    sinTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.X),
+                Y =
+                (float)
+                    (sinTheta * (pointToRotate.X - centerPoint.X) +
+                    cosTheta * (pointToRotate.Y - centerPoint.Y) + centerPoint.Y)
+            };
+        }
+
+        private void RefreshGamePos()
+        {
+            PointF pos = new PointF(0, 0);
+            pos.X = (VirtualCoord.Y / (float)ClientRatio) + BasePoint.X;
+            pos.Y = (-VirtualCoord.X / (float)ClientRatio) + BasePoint.Y;
+
+            PointF res = pos;
+            if (BasePointO != 0)
+                res = RotatePoint(pos, BasePoint, BasePointO);
+            GameCoord.X = res.X;
+            GameCoord.Y = res.Y;
         }
 
         public void SetScreenPosition(Point newPos)
         {
-            GameCoord.X = -((newPos.Y * xRatio) - MaxMapCoord);
-            GameCoord.Y = -((newPos.X * yRatio) - MaxMapCoord);
             screenCoord = newPos;
-            screenCoord.X = newPos.X + ClientXOffset;
-            screenCoord.Y = -newPos.Y + ClientYOffset;
+            VirtualCoord = newPos;
+            screenCoord.X = newPos.X;
+            screenCoord.Y = -newPos.Y;
+            RefreshGamePos();
             //Console.WriteLine("Game x= " + m_currentPosX.ToString() + " y=" + m_currentPosY.ToString());
             SetTile();
         }
         public void SetGamePosition(PointF newPos)
         {
             GameCoord = newPos;
-            screenCoord.X = Convert.ToInt32(Math.Truncate((-GameCoord.Y + MaxMapCoord) / yRatio)) + ClientXOffset;
-            screenCoord.Y = Convert.ToInt32(Math.Truncate((-GameCoord.X + MaxMapCoord) / xRatio)) + ClientYOffset;
+            screenCoord.X = Convert.ToInt32(Math.Truncate((-GameCoord.Y + MaxMapCoord) / yRatio));
+            screenCoord.Y = Convert.ToInt32(Math.Truncate((-GameCoord.X + MaxMapCoord) / xRatio));
+            VirtualCoord.X = screenCoord.X;
+            VirtualCoord.Y = -screenCoord.Y;
             SetTile();
         }
 
