@@ -111,6 +111,10 @@ namespace TobiTools
             ToolTipsRectangle.Height = 40;
             ToolTipsRectangle.Width = 140;
 
+            // check if have at least one entry
+            if (FormationDataMgr.Count() == 0)
+                FormationDataMgr.AddEntry(1);
+
             // Fill the DataGridView
             foreach (FormationDataEntry dataEntry in FormationDataMgr.GetEntries())
             {
@@ -123,8 +127,7 @@ namespace TobiTools
                 EntriesDGV.Rows.Add(newRow);
             }
 
-            if (FormationDataMgr.Count() > 0)
-                ShowEntry(FormationDataMgr.GetEntries()[0].Entry);
+            ShowEntry(FormationDataMgr.GetEntries()[0].Entry);
 
         }
 
@@ -721,7 +724,7 @@ namespace TobiTools
             if (e.StateChanged != DataGridViewElementStates.Selected)
                 return;
 
-            if (e.Row.Index == EntriesDGV.CurrentRow.Index)
+            if (EntriesDGV.CurrentRow == null || e.Row.Index == EntriesDGV.CurrentRow.Index)
                 return;
 
             if (e.Row.Tag == null)
