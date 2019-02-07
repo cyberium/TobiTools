@@ -33,7 +33,9 @@ namespace TobiTools
         Object ToolTipsSelectedObj = null;
         TooltipsInfos ToolTipsInfo;
         Font TTipsFont = new Font("Arial", 8, FontStyle.Regular);
-        float BaseGameX = 0; float BaseGameY = 0; float BaseGameO = 0;
+        FormationDataEntry CurrentSelectedEntry = null;
+
+        FormationData FormationDataMgr = new FormationData();
 
         static string SavedDataFileName = "creature_formation_template.sql";
         static int ClientRatio = 10;
@@ -70,6 +72,7 @@ namespace TobiTools
             Settings.Default.zDest = zDestTBX.Text;
             Settings.Default.oDest = oDestTBX.Text;
             Settings.Default.Save();
+            FormationDataMgr.Save();
         }
 
         private void Initialize()
@@ -80,7 +83,6 @@ namespace TobiTools
             VirtualClientSize.Height = MainDrawPB.ClientSize.Height * ClientRatio;
 
             MainDrawPB.Image = new Bitmap(MainDrawPB.ClientSize.Width, MainDrawPB.ClientSize.Height);
-            ObjectsList.Add(0, new Master(VirtualClientSize));
             MainDataDGV.ColumnCount = 3;
             MainDataDGV.Columns[0].Name = "Id";
             MainDataDGV.Columns[1].Name = "Angle";
@@ -95,15 +97,6 @@ namespace TobiTools
 
             MainDataDGV.Columns[0].ReadOnly = true;
 
-            InGameDGV.ColumnCount = 3;
-            InGameDGV.Columns[0].Name = "X";
-            InGameDGV.Columns[1].Name = "Y";
-            InGameDGV.Columns[2].Name = "Orientation";
-            InGameDGV.Columns[0].Width = 60;
-            InGameDGV.Columns[1].Width = 60;
-            InGameDGV.Columns[2].Width = 60;
-            InGameDGV.Rows.Add("0", "0", "0");
-
             EntriesDGV.ColumnCount = 4;
             EntriesDGV.Columns[0].Name = "Entry";
             EntriesDGV.Columns[1].Name = "X";
@@ -113,81 +106,26 @@ namespace TobiTools
             EntriesDGV.Columns[1].Width = 60;
             EntriesDGV.Columns[2].Width = 60;
             EntriesDGV.Columns[3].Width = 60;
-            EntriesDGV.Rows.Add("1", "0", "0", "0");
 
 
             ToolTipsRectangle.Height = 40;
             ToolTipsRectangle.Width = 140;
-            EntryLoader();
-        }
 
-        private void EntryLoader()
-        {
-            string[] InputData = File.ReadAllLines(SavedDataFileName);
-
-            foreach(string sql in InputData)
+            // Fill the DataGridView
+            foreach (FormationDataEntry dataEntry in FormationDataMgr.GetEntries())
             {
-                int entry = 0; int id = 0; float angle = 0; float dist = 0;
-
-                if (!ParserInsertSQL(sql, out entry, out id, out angle, out dist))
-                {
-                    Console.WriteLine("Error occured while trying to parse {0}", sql);
-                    continue;
-                }
-
-            }
-        }
-
-        private bool ParserInsertSQL(string sql, out int entry, out int id, out float angle, out float dist)
-        {
-            entry = 0; id = 0; angle = 0; dist = 0;
-
-            if (!sql.StartsWith("INSERT", StringComparison.OrdinalIgnoreCase) || !sql.EndsWith(";"))
-            {
-
-                return false;
+                DataGridViewRow newRow = (DataGridViewRow)EntriesDGV.Rows[0].Clone();
+                newRow.Cells[0].Value = dataEntry.Entry.ToString();
+                newRow.Cells[1].Value = dataEntry.MasterX.ToString();
+                newRow.Cells[2].Value = dataEntry.MasterY.ToString();
+                newRow.Cells[3].Value = dataEntry.MasterO.ToString();
+                newRow.Tag = dataEntry.Entry;
+                EntriesDGV.Rows.Add(newRow);
             }
 
-            string[] colName = { "entry", "id", "dist", "angle", "VALUES" };
+            if (FormationDataMgr.Count() > 0)
+                ShowEntry(FormationDataMgr.GetEntries()[0].Entry);
 
-            int startIdx = 0;
-            for (int i = 0; i < colName.Count<string>(); i++)
-            {
-                int currIndex = sql.IndexOf(colName[i], startIdx, StringComparison.OrdinalIgnoreCase);
-                if (currIndex > 0)
-                    startIdx = currIndex;
-                else
-                    return false;
-            }
-
-            int parStartIdx = sql.IndexOf('(', startIdx);
-            int parEndIndx = sql.IndexOf(')', parStartIdx);
-
-            if (parStartIdx < 0 || parEndIndx < 0)
-                return false;
-
-            ++parStartIdx;
-            string values = sql.Substring(parStartIdx, parEndIndx - parStartIdx);
-
-            values = values.Replace("`", String.Empty);
-            string[] splitedValues = Array.ConvertAll(values.Split(','), p => p.Trim());
-
-            if (splitedValues.Count<string>() != 4)
-                return false;
-
-            if (!ValidateInt(splitedValues[0], out entry))
-                return false;
-
-            if (!ValidateInt(splitedValues[1], out id))
-                return false;
-
-            if (!ValidateFloat(splitedValues[2], out angle))
-                return false;
-
-            if (!ValidateFloat(splitedValues[3], out dist))
-                return false;
-
-            return true;
         }
 
         private void TextBox_Enter(object sender, EventArgs e)
@@ -344,7 +282,7 @@ namespace TobiTools
             return v;
         }
 
-        private bool AddRowToMainDGV(string angleStr, string distStr)
+        private bool AddRowToMainDGV(string angleStr, string distStr, float oriX = 0, float oriY = 0, float oriO = 0, int entry = 0)
         {
             float angle, dist;
             if (ValidateFloat(angleStr, out angle) && ValidateFloat(distStr, out dist))
@@ -357,6 +295,21 @@ namespace TobiTools
 
                 foreach (DataGridViewCell cell in currRow.Cells)
                     cell.Style.BackColor = Color.Green;
+
+
+                DataGridViewRow entryRow = null;
+                if (entry != 0)
+                {
+                    string entryStr = entry.ToString();
+                    foreach(DataGridViewRow row in EntriesDGV.Rows)
+                    {
+                        if (row.Cells[0].Value.ToString() == entryStr)
+                            entryRow = row;
+                    }
+                }
+
+                /*if (entryRow == null)
+                    entryRow = */
 
                 return true;
             }
@@ -383,7 +336,7 @@ namespace TobiTools
             x = Convert.ToInt32(finalPoint.X);
             y = Convert.ToInt32(finalPoint.Y);
 
-            slave.SetBaseGamePos(BaseGameX, BaseGameY, BaseGameO);
+            slave.SetBaseGamePos(CurrentSelectedEntry.MasterX, CurrentSelectedEntry.MasterY, CurrentSelectedEntry.MasterO);
             slave.SetScreenPosition(new Point(x, y));
 
 
@@ -398,6 +351,16 @@ namespace TobiTools
         {
             if (ObjectsList.Remove(idx))
                 MainDrawPB.Invalidate();
+        }
+
+        private void ClearObjects()
+        {
+            ObjectsList.Clear();
+            ObjectsList.Add(0, new Master(VirtualClientSize));
+
+            MainDataDGV.Rows.Clear();
+
+            MainDrawPB.Invalidate();
         }
 
         private void MainDataDGV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -459,6 +422,7 @@ namespace TobiTools
                     cell.Style.BackColor = Color.Green;
 
                 AddObject(currRow, angle, dist);
+                CurrentSelectedEntry.AddSlave(angle, dist);
             }
             else
             {
@@ -543,81 +507,43 @@ namespace TobiTools
             MainDrawPB.Invalidate();
         }
 
-        private void InGameDGV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            float value = 0;
-
-            DataGridViewRow currRow = InGameDGV.CurrentRow;
-            DataGridViewCell currCell = currRow.Cells[e.ColumnIndex];
-
-            switch (e.ColumnIndex)
-            {
-                case 0:
-                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
-                        BaseGameX = value;
-
-                    currCell.Value = BaseGameX.ToString();
-                    break;
-                case 1:
-                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
-                        BaseGameY = value;
-
-                    currCell.Value = BaseGameY.ToString();
-                    break;
-                case 2:
-                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
-                        BaseGameO = value;
-
-                    currCell.Value = BaseGameO.ToString();
-                    break;
-                default:
-                    break;
-            }
-
-            foreach (var item in ObjectsList)
-            {
-                item.Value.SetBaseGamePos(BaseGameX, BaseGameY, BaseGameO);
-            }
-        }
-
         private void button3_Click(object sender, EventArgs e)
         {
             float angle, dist;
-            if (ValidateInputBox() && ValidateFloat(angleResultTBX.Text, out angle) && ValidateFloat(distResultTBX.Text, out dist))
+            /*if (ValidateInputBox() && ValidateFloat(angleResultTBX.Text, out angle) && ValidateFloat(distResultTBX.Text, out dist))
             {
                 float value = 0;
                 if (ValidateFloat(xOriginTBX.Text, out value))
                     BaseGameX = value;
-                InGameDGV.Rows[0].Cells[0].Value = BaseGameX.ToString();
 
                 if (ValidateFloat(yOriginTBX.Text, out value))
                     BaseGameY = value;
-                InGameDGV.Rows[0].Cells[1].Value = BaseGameY.ToString();
 
                 if (ValidateFloat(oOriginTBX.Text, out value))
                     BaseGameO = value;
-                InGameDGV.Rows[0].Cells[2].Value = BaseGameO.ToString();
 
                 foreach (var item in ObjectsList)
                 {
                     item.Value.SetBaseGamePos(BaseGameX, BaseGameY, BaseGameO);
                 }
 
-                AddRowToMainDGV(angleResultTBX.Text, distResultTBX.Text);
-            }
+                AddRowToMainDGV(angleResultTBX.Text, distResultTBX.Text, BaseGameX, BaseGameY, BaseGameO);
+            }*/
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
+            FormationDataMgr.Save();
+            return;
             //INSERT INTO table_name (column1, column2, column3, ...) VALUES(value1, value2, value3, ...);
             const string format = "INSERT `creature_formation_template` (entry, id, dist, angle) VALUES(`{0}`, `{1}`, `{2}`, `{3}`);";
             List<string> sqlList = new List<string>();
             int entry = 0;
-            if (!int.TryParse(EntryTBX.Text, out entry) || entry <= 0)
+            /*if (!int.TryParse(EntryTBX.Text, out entry) || entry <= 0)
             {
                 MessageBox.Show("Invalid formation entry!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-            }
+            }*/
 
             foreach (DataGridViewRow currRow in MainDataDGV.Rows)
             {
@@ -676,25 +602,139 @@ namespace TobiTools
 
         }
 
-        private void EntryTBX_KeyPress(object sender, KeyPressEventArgs e)
+        private void EntriesDGV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            float value = 0;
+            int intValue = 0;
+            int newWantedEntry = 0;
+
+            DataGridViewRow currRow = EntriesDGV.Rows[e.RowIndex];
+            DataGridViewCell currCell = currRow.Cells[e.ColumnIndex];
+
+            switch (e.ColumnIndex)
             {
-                e.Handled = true;
+                case 0:
+                    if (currCell.Value != null && ValidateInt(currCell.Value.ToString(), out intValue))
+                        newWantedEntry = intValue;
+                    else
+                    {
+                        MessageBox.Show("Invalid entry", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        currCell.Value = currRow.Tag.ToString();
+                        return;
+                    }
+
+                    break;
+                case 1:
+                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
+                        CurrentSelectedEntry.MasterX = value;
+
+                    currCell.Value = CurrentSelectedEntry.MasterX.ToString();
+                    break;
+                case 2:
+                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
+                        CurrentSelectedEntry.MasterY = value;
+
+                    currCell.Value = CurrentSelectedEntry.MasterY.ToString();
+                    break;
+                case 3:
+                    if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
+                        CurrentSelectedEntry.MasterO = value;
+
+                    currCell.Value = CurrentSelectedEntry.MasterO.ToString();
+                    break;
+                default:
+                    break;
+            }
+
+            if (currRow.Tag == null)
+            {
+                // New line!
+                if (newWantedEntry == 0 || !FormationDataMgr.IsNewEntryIDValid(newWantedEntry))
+                    newWantedEntry = FormationDataMgr.GetAvailableEntryID();
+                FormationDataMgr.CreateEntryIfNeed(newWantedEntry);
+                currRow.Tag = newWantedEntry;
+                currRow.Cells[0].Value = newWantedEntry.ToString();
+
+                for (int i = 1; i < currRow.Cells.Count; ++i)
+                {
+                    float tempVal = 0;
+                    if (currRow.Cells[i].Value == null || !ValidateFloat(currRow.Cells[i].Value.ToString(), out tempVal))
+                        currRow.Cells[i].Value = 0;
+                }
+            }
+            else
+            {
+                // Existing row
+                int realEntry = (int)currRow.Tag;
+                FormationDataEntry dataEntry = FormationDataMgr.GetEntry(realEntry);
+                if (newWantedEntry != 0 && newWantedEntry != realEntry)
+                {
+                    if (!FormationDataMgr.SetEntry(realEntry, newWantedEntry))
+                    {
+                        MessageBox.Show("Entry already exist!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        currCell.Value = currRow.Tag.ToString();
+                    }
+                    return;
+                }
+            }
+
+            if (newWantedEntry == CurrentSelectedEntry.Entry)
+            {
+                foreach (var item in ObjectsList)
+                {
+                    item.Value.SetBaseGamePos(CurrentSelectedEntry.MasterX, CurrentSelectedEntry.MasterY, CurrentSelectedEntry.MasterO);
+                }
             }
         }
 
-        private void EntryTBX_TextChanged(object sender, EventArgs e)
+        public void ShowEntry(int entry)
         {
-            int value = 0;
-            TextBox tb = sender as TextBox;
-            if (!ValidateInt(tb.Text, out value) || value <= 0)
-                tb.BackColor = Color.IndianRed;
-            else
+            ClearObjects();
+
+            FormationDataEntry currEntry = FormationDataMgr.GetEntry(entry);
+            if (currEntry == null)
+                return;
+
+            CurrentSelectedEntry = currEntry;
+
+            List<SlaveDataEntry> slaves = currEntry.slaveEntries;
+            if (slaves != null)
             {
-                tb.BackColor = Color.Green;
-                tb.Text = value.ToString();
+                foreach (SlaveDataEntry slave in slaves)
+                {
+                    int rowIndex = MainDataDGV.Rows.Add(slave.ID.ToString(), slave.Angle.ToString(), slave.Distance.ToString());
+                    DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
+                    currRow.Tag = BaseID++;
+                    AddObject(currRow, slave.Angle, slave.Distance);
+
+                    foreach (DataGridViewCell cell in currRow.Cells)
+                        cell.Style.BackColor = Color.Green;
+                }
             }
+            MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = slaves.Count + 1;
+            MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Style.BackColor = Color.LawnGreen;
+            MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Tag = BaseID++;
+        }
+
+        private void EntriesDGV_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+        {
+            if (e.StateChanged != DataGridViewElementStates.Selected)
+                return;
+
+            if (e.Row.Index == EntriesDGV.CurrentRow.Index)
+                return;
+
+            if (e.Row.Tag == null)
+                return;
+
+            int entry = 0;
+            if (!ValidateInt(e.Row.Tag.ToString(), out entry))
+                return;
+
+            if (entry == CurrentSelectedEntry.Entry)
+                return;
+
+            ShowEntry(entry);
         }
     }
 }

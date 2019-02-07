@@ -54,25 +54,21 @@
             this.oOriginTBX = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button3 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label15 = new System.Windows.Forms.Label();
+            this.EntriesDGV = new System.Windows.Forms.DataGridView();
+            this.label14 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
             this.MainDataDGV = new System.Windows.Forms.DataGridView();
             this.MainDrawPB = new System.Windows.Forms.PictureBox();
             this.MainTimer = new System.Windows.Forms.Timer(this.components);
-            this.label13 = new System.Windows.Forms.Label();
-            this.InGameDGV = new System.Windows.Forms.DataGridView();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label14 = new System.Windows.Forms.Label();
-            this.EntryTBX = new System.Windows.Forms.TextBox();
-            this.EntriesDGV = new System.Windows.Forms.DataGridView();
-            this.label15 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.InGameDGV)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).BeginInit();
             this.SuspendLayout();
             // 
             // xOriginTBX
@@ -321,19 +317,26 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(832, 391);
+            this.tabPage1.Size = new System.Drawing.Size(863, 391);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Dist/Angle";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(446, 22);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(113, 23);
+            this.button3.TabIndex = 23;
+            this.button3.Text = "Add to Visualisator";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.label15);
             this.tabPage2.Controls.Add(this.EntriesDGV);
-            this.tabPage2.Controls.Add(this.EntryTBX);
             this.tabPage2.Controls.Add(this.label14);
-            this.tabPage2.Controls.Add(this.InGameDGV);
-            this.tabPage2.Controls.Add(this.label13);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Controls.Add(this.MainDataDGV);
             this.tabPage2.Controls.Add(this.MainDrawPB);
@@ -344,6 +347,35 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Visual Formation";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(592, 6);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(39, 13);
+            this.label15.TabIndex = 18;
+            this.label15.Text = "Entries";
+            // 
+            // EntriesDGV
+            // 
+            this.EntriesDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.EntriesDGV.Location = new System.Drawing.Point(596, 22);
+            this.EntriesDGV.Name = "EntriesDGV";
+            this.EntriesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.EntriesDGV.Size = new System.Drawing.Size(261, 332);
+            this.EntriesDGV.TabIndex = 17;
+            this.EntriesDGV.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.EntriesDGV_CellEndEdit);
+            this.EntriesDGV.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.EntriesDGV_RowStateChanged);
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(388, 6);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(58, 13);
+            this.label14.TabIndex = 15;
+            this.label14.Text = "Slaves List";
             // 
             // button2
             // 
@@ -357,11 +389,11 @@
             // 
             // MainDataDGV
             // 
-            this.MainDataDGV.Location = new System.Drawing.Point(390, 115);
+            this.MainDataDGV.Location = new System.Drawing.Point(390, 22);
             this.MainDataDGV.MultiSelect = false;
             this.MainDataDGV.Name = "MainDataDGV";
             this.MainDataDGV.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.IndianRed;
-            this.MainDataDGV.Size = new System.Drawing.Size(200, 239);
+            this.MainDataDGV.Size = new System.Drawing.Size(200, 332);
             this.MainDataDGV.TabIndex = 1;
             this.MainDataDGV.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.MainDataDGV_CellEndEdit);
             this.MainDataDGV.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.MainDataDGV_UserAddedRow);
@@ -383,73 +415,6 @@
             this.MainTimer.Enabled = true;
             this.MainTimer.Tick += new System.EventHandler(this.MainTimer_Tick);
             // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(392, 6);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(121, 13);
-            this.label13.TabIndex = 13;
-            this.label13.Text = "Current InGame Position";
-            // 
-            // InGameDGV
-            // 
-            this.InGameDGV.AllowUserToAddRows = false;
-            this.InGameDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.InGameDGV.Location = new System.Drawing.Point(392, 22);
-            this.InGameDGV.Name = "InGameDGV";
-            this.InGameDGV.RowHeadersVisible = false;
-            this.InGameDGV.Size = new System.Drawing.Size(198, 57);
-            this.InGameDGV.TabIndex = 14;
-            this.InGameDGV.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.InGameDGV_CellEndEdit);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(446, 22);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(113, 23);
-            this.button3.TabIndex = 23;
-            this.button3.Text = "Add to Visualisator";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(392, 92);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(79, 13);
-            this.label14.TabIndex = 15;
-            this.label14.Text = "Formation entry";
-            // 
-            // EntryTBX
-            // 
-            this.EntryTBX.BackColor = System.Drawing.Color.IndianRed;
-            this.EntryTBX.Location = new System.Drawing.Point(477, 89);
-            this.EntryTBX.Name = "EntryTBX";
-            this.EntryTBX.Size = new System.Drawing.Size(53, 20);
-            this.EntryTBX.TabIndex = 16;
-            this.EntryTBX.Text = "0";
-            this.EntryTBX.TextChanged += new System.EventHandler(this.EntryTBX_TextChanged);
-            this.EntryTBX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.EntryTBX_KeyPress);
-            // 
-            // EntriesDGV
-            // 
-            this.EntriesDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.EntriesDGV.Location = new System.Drawing.Point(596, 22);
-            this.EntriesDGV.Name = "EntriesDGV";
-            this.EntriesDGV.Size = new System.Drawing.Size(261, 332);
-            this.EntriesDGV.TabIndex = 17;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(593, 6);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(39, 13);
-            this.label15.TabIndex = 18;
-            this.label15.Text = "Entries";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -466,10 +431,9 @@
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.InGameDGV)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -506,10 +470,7 @@
         private System.Windows.Forms.Timer MainTimer;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.DataGridView MainDataDGV;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.DataGridView InGameDGV;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TextBox EntryTBX;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.DataGridView EntriesDGV;
         private System.Windows.Forms.Label label15;
