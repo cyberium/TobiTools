@@ -533,7 +533,7 @@ namespace TobiTools
         private void ExportSqlBUT_Click(object sender, EventArgs e)
         {
             //INSERT INTO table_name (column1, column2, column3, ...) VALUES(value1, value2, value3, ...);
-            const string format = "INSERT `creature_formation_template` (entry, id, dist, angle) VALUES(`{0}`, `{1}`, `{2}`, `{3}`);";
+            const string format = "INSERT `creature_formation_template` (`entry`, `id`, `dist`, `angle`) VALUES('{0}', '{1}', '{2}', '{3}');";
             List<string> sqlList = new List<string>();
 
             foreach (FormationDataEntry dataEntry in FormationDataMgr.GetEntries())
