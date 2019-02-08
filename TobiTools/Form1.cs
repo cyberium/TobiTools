@@ -662,6 +662,59 @@ namespace TobiTools
             }
         }
 
+        private void EntriesDGV_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
+        {
+            if (e.StateChanged != DataGridViewElementStates.Selected)
+                return;
+
+            if (EntriesDGV.CurrentRow == null || e.Row.Index == EntriesDGV.CurrentRow.Index)
+                return;
+
+            if (e.Row.Tag == null)
+                return;
+
+            int entry = 0;
+            if (!ValidateInt(e.Row.Tag.ToString(), out entry))
+                return;
+
+            if (entry == CurrentSelectedEntry.Entry)
+                return;
+
+            ShowEntry(entry);
+        }
+
+        private void EntriesDGV_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            int entry = (int)e.Row.Tag;
+
+            FormationDataMgr.RemoveEntry(entry);
+
+            int newIndex = -1;
+            if (e.Row.Index > 0)
+                newIndex = e.Row.Index - 1;
+            else
+            {
+                if (FormationDataMgr.Count() < 1)
+                {
+                    // check if have at least one entry
+                    FormationDataEntry dataEntry = FormationDataMgr.AddEntry(1);
+
+                    // Fill the DataGridView
+                    DataGridViewRow newRow = (DataGridViewRow)EntriesDGV.Rows[0].Clone();
+                    newRow.Cells[0].Value = dataEntry.Entry.ToString();
+                    newRow.Cells[1].Value = dataEntry.MasterX.ToString();
+                    newRow.Cells[2].Value = dataEntry.MasterY.ToString();
+                    newRow.Cells[3].Value = dataEntry.MasterO.ToString();
+                    newRow.Tag = dataEntry.Entry;
+                    EntriesDGV.Rows.Add(newRow);
+                }
+                newIndex = 1;
+            }
+
+
+            ShowEntry((int)EntriesDGV.Rows[newIndex].Tag);
+        }
+
         public void ShowEntry(int entry)
         {
             ClearObjects();
@@ -688,27 +741,6 @@ namespace TobiTools
             }
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = slaves.Count + 1;
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Style.BackColor = Color.LawnGreen;
-        }
-
-        private void EntriesDGV_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
-        {
-            if (e.StateChanged != DataGridViewElementStates.Selected)
-                return;
-
-            if (EntriesDGV.CurrentRow == null || e.Row.Index == EntriesDGV.CurrentRow.Index)
-                return;
-
-            if (e.Row.Tag == null)
-                return;
-
-            int entry = 0;
-            if (!ValidateInt(e.Row.Tag.ToString(), out entry))
-                return;
-
-            if (entry == CurrentSelectedEntry.Entry)
-                return;
-
-            ShowEntry(entry);
         }
     }
 }

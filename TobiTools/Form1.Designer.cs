@@ -367,6 +367,7 @@
             this.EntriesDGV.TabIndex = 17;
             this.EntriesDGV.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.EntriesDGV_CellEndEdit);
             this.EntriesDGV.RowStateChanged += new System.Windows.Forms.DataGridViewRowStateChangedEventHandler(this.EntriesDGV_RowStateChanged);
+            this.EntriesDGV.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.EntriesDGV_UserDeletingRow);
             // 
             // label14
             // 
