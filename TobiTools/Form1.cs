@@ -285,41 +285,6 @@ namespace TobiTools
             return v;
         }
 
-        private bool AddRowToMainDGV(string angleStr, string distStr, float oriX = 0, float oriY = 0, float oriO = 0, int entry = 0)
-        {
-            float angle, dist;
-            if (ValidateFloat(angleStr, out angle) && ValidateFloat(distStr, out dist))
-            {
-                int rowIndex = MainDataDGV.Rows.Add(MainDataDGV.Rows.Count.ToString(), angleResultTBX.Text, distResultTBX.Text);
-                DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
-                currRow.Tag = BaseID++;
-                AddObject(currRow, angle, dist);
-                MainDataDGV.Rows[MainDataDGV.Rows.Count- 1].Cells[0].Value = MainDataDGV.Rows.Count;
-
-                foreach (DataGridViewCell cell in currRow.Cells)
-                    cell.Style.BackColor = Color.Green;
-
-
-                DataGridViewRow entryRow = null;
-                if (entry != 0)
-                {
-                    string entryStr = entry.ToString();
-                    foreach(DataGridViewRow row in EntriesDGV.Rows)
-                    {
-                        if (row.Cells[0].Value.ToString() == entryStr)
-                            entryRow = row;
-                    }
-                }
-
-                /*if (entryRow == null)
-                    entryRow = */
-
-                return true;
-            }
-
-            return false;
-        }
-
         private void AddObject(DataGridViewRow currRow, float angle, float dist)
         {
             Slave slave = null;
@@ -513,25 +478,35 @@ namespace TobiTools
         private void button3_Click(object sender, EventArgs e)
         {
             float angle, dist;
-            /*if (ValidateInputBox() && ValidateFloat(angleResultTBX.Text, out angle) && ValidateFloat(distResultTBX.Text, out dist))
+            if (ValidateInputBox() && ValidateFloat(angleResultTBX.Text, out angle) && ValidateFloat(distResultTBX.Text, out dist))
             {
                 float value = 0;
                 if (ValidateFloat(xOriginTBX.Text, out value))
-                    BaseGameX = value;
+                    CurrentSelectedEntry.MasterX = value;
 
                 if (ValidateFloat(yOriginTBX.Text, out value))
-                    BaseGameY = value;
+                    CurrentSelectedEntry.MasterY = value;
 
                 if (ValidateFloat(oOriginTBX.Text, out value))
-                    BaseGameO = value;
+                    CurrentSelectedEntry.MasterO = value;
 
                 foreach (var item in ObjectsList)
                 {
-                    item.Value.SetBaseGamePos(BaseGameX, BaseGameY, BaseGameO);
+                    item.Value.SetBaseGamePos(CurrentSelectedEntry.MasterX, CurrentSelectedEntry.MasterY, CurrentSelectedEntry.MasterO);
                 }
 
-                AddRowToMainDGV(angleResultTBX.Text, distResultTBX.Text, BaseGameX, BaseGameY, BaseGameO);
-            }*/
+                SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, dist);
+
+                int rowIndex = MainDataDGV.Rows.Add(slaveEntry.ID.ToString(), angleResultTBX.Text, distResultTBX.Text);
+                DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
+                currRow.Tag = BaseID++;
+                AddObject(currRow, angle, dist);
+                MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = MainDataDGV.Rows.Count;
+
+                foreach (DataGridViewCell cell in currRow.Cells)
+                    cell.Style.BackColor = Color.Green;
+
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

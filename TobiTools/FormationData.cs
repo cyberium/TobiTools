@@ -55,7 +55,7 @@ namespace TobiTools
             GeneratedIDs = 1;
         }
 
-        public void AddSlave(float angle, float distance, int id = 0)
+        public SlaveDataEntry AddSlave(float angle, float distance, int id = 0)
         {
             if (id > 0)
             {
@@ -66,14 +66,17 @@ namespace TobiTools
                     {
                         row.Angle = angle;
                         row.Distance = distance;
-                        return;
+                        return row;
                     }
                 }
 
                 if (GeneratedIDs < id)
                     GeneratedIDs = id + 1;
             }
-            slaveEntries.Add(new SlaveDataEntry(GeneratedIDs++, angle, distance));
+
+            SlaveDataEntry newSlave = new SlaveDataEntry(GeneratedIDs++, angle, distance);
+            slaveEntries.Add(newSlave);
+            return newSlave;
         }
 
         public void RemoveSlave(int id)
