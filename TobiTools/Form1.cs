@@ -597,6 +597,12 @@ namespace TobiTools
                         newWantedEntry = intValue;
                     else
                     {
+                        if (currRow.Tag == null)
+                        {
+                            currCell.Value = null;
+                            return;
+                        }
+
                         MessageBox.Show("Invalid entry", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         currCell.Value = currRow.Tag.ToString();
                         return;
@@ -606,18 +612,42 @@ namespace TobiTools
                 case 1:
                     if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
                         CurrentSelectedEntry.MasterX = value;
+                    else
+                    {
+                        if (currRow.Tag == null)
+                        {
+                            currCell.Value = null;
+                            return;
+                        }
+                    }
 
                     currCell.Value = CurrentSelectedEntry.MasterX.ToString();
                     break;
                 case 2:
                     if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
                         CurrentSelectedEntry.MasterY = value;
+                    else
+                    {
+                        if (currRow.Tag == null)
+                        {
+                            currCell.Value = null;
+                            return;
+                        }
+                    }
 
                     currCell.Value = CurrentSelectedEntry.MasterY.ToString();
                     break;
                 case 3:
                     if (currCell.Value != null && ValidateFloat(currCell.Value.ToString(), out value))
                         CurrentSelectedEntry.MasterO = value;
+                    else
+                    {
+                        if (currRow.Tag == null)
+                        {
+                            currCell.Value = null;
+                            return;
+                        }
+                    }
 
                     currCell.Value = CurrentSelectedEntry.MasterO.ToString();
                     break;
