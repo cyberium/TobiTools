@@ -61,9 +61,9 @@ namespace TobiTools
             GeneratedIDs = 1;
         }
 
-        public SlaveDataEntry AddSlave(float angle, float distance, int id = 0)
+        public SlaveDataEntry AddSlave(float angle, float distance, int id = -1)
         {
-            if (id > 0)
+            if (id >= 0)
             {
                 for (int i = 0; i < slaveEntries.Count; ++i)
                 {

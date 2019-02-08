@@ -385,7 +385,11 @@ namespace TobiTools
                 foreach (DataGridViewCell cell in currRow.Cells)
                     cell.Style.BackColor = Color.Green;
 
-                SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, dist);
+                int currentid = -1;
+                if (currRow.Tag != null)
+                    currentid = (int)currRow.Tag;
+
+                SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, dist, currentid);
                 AddObject(currRow, slaveEntry);
             }
             else
