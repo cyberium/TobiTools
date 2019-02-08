@@ -510,66 +510,19 @@ namespace TobiTools
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ExportSqlBUT_Click(object sender, EventArgs e)
         {
-            FormationDataMgr.Save();
-            return;
             //INSERT INTO table_name (column1, column2, column3, ...) VALUES(value1, value2, value3, ...);
             const string format = "INSERT `creature_formation_template` (entry, id, dist, angle) VALUES(`{0}`, `{1}`, `{2}`, `{3}`);";
             List<string> sqlList = new List<string>();
-            int entry = 0;
-            /*if (!int.TryParse(EntryTBX.Text, out entry) || entry <= 0)
+
+            foreach (FormationDataEntry dataEntry in FormationDataMgr.GetEntries())
             {
-                MessageBox.Show("Invalid formation entry!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }*/
+                int currentEntry = dataEntry.Entry;
 
-            foreach (DataGridViewRow currRow in MainDataDGV.Rows)
-            {
-                int id = -1;
-                float angle = -1;
-                float dist = -1;
-                int validCell = 0;
-
-                foreach (DataGridViewCell cell in currRow.Cells)
+                foreach (SlaveDataEntry slaveEntry in dataEntry.slaveEntries)
                 {
-                    switch (cell.ColumnIndex)
-                    {
-                        case 0:
-                            if (cell.Value == null)
-                                continue;
-                            if (!ValidateInt(cell.Value.ToString(), out id))
-                                cell.Style.BackColor = Color.IndianRed;
-                            else
-                                ++validCell;
-                            break;
-
-                        case 1:
-                            if (cell.Value == null)
-                                continue;
-                            if (!ValidateFloat(cell.Value.ToString(), out angle))
-                                cell.Style.BackColor = Color.IndianRed;
-                            else
-                                ++validCell;
-                            break;
-
-                        case 2:
-                            if (cell.Value == null)
-                                continue;
-                            if (!ValidateFloat(cell.Value.ToString(), out dist))
-                                cell.Style.BackColor = Color.IndianRed;
-                            else
-                                ++validCell;
-                            break;
-
-                        default:
-                            break;
-                    }
-                }
-
-                if (validCell == 3)
-                {
-                    string sql = string.Format(format, entry.ToString(), id.ToString(), angle.ToString(), dist.ToString());
+                    string sql = string.Format(format, currentEntry.ToString(), slaveEntry.ID.ToString(), slaveEntry.Angle.ToString(), slaveEntry.Distance.ToString());
                     sqlList.Add(sql);
                 }
             }
@@ -578,7 +531,6 @@ namespace TobiTools
                 return;
 
             File.WriteAllLines(SavedDataFileName, sqlList);
-
         }
 
         private void EntriesDGV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
