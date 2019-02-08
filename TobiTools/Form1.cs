@@ -689,15 +689,13 @@ namespace TobiTools
             ShowEntry(entry);
         }
 
-        private void EntriesDGV_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        private void DeleteEntriesRow(int entry, int index)
         {
-            int entry = (int)e.Row.Tag;
-
             FormationDataMgr.RemoveEntry(entry);
 
             int newIndex = -1;
-            if (e.Row.Index > 0)
-                newIndex = e.Row.Index - 1;
+            if (index > 0)
+                newIndex = index - 1;
             else
             {
                 if (FormationDataMgr.Count() < 1)
@@ -717,21 +715,21 @@ namespace TobiTools
                 newIndex = 1;
             }
 
-
             ShowEntry((int)EntriesDGV.Rows[newIndex].Tag);
         }
 
-        public void ShowEntry(int entry)
+        private void EntriesDGV_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            int entry = (int)e.Row.Tag;
+
+            DeleteEntriesRow(entry, e.Row.Index);
+        }
+
+        public void ShowEntry(FormationDataEntry dataEntry)
         {
             ClearObjects();
 
-            FormationDataEntry currEntry = FormationDataMgr.GetEntry(entry);
-            if (currEntry == null)
-                return;
-
-            CurrentSelectedEntry = currEntry;
-
-            List<SlaveDataEntry> slaves = currEntry.slaveEntries;
+            List<SlaveDataEntry> slaves = dataEntry.slaveEntries;
             if (slaves != null)
             {
                 foreach (SlaveDataEntry slave in slaves)
@@ -747,6 +745,27 @@ namespace TobiTools
             }
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = slaves.Count + 1;
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Style.BackColor = Color.LawnGreen;
+        }
+
+        public void ShowEntry(int entry)
+        {
+            FormationDataEntry currEntry = FormationDataMgr.GetEntry(entry);
+            if (currEntry == null)
+                return;
+
+            CurrentSelectedEntry = currEntry;
+            ShowEntry(currEntry);
+        }
+
+        public void RotateEntry(FormationDataEntry dataEntry, int degrees)
+        {
+            for (int i = 0; i < CurrentSelectedEntry.slaveEntries.Count; ++i)
+            {
+                SlaveDataEntry currSlaveEntry = CurrentSelectedEntry.slaveEntries[i];
+                SlaveDataEntry tempSlaveEntry = dataEntry.slaveEntries[i];
+
+                tempSlaveEntry.Angle = currSlaveEntry.Angle + degrees;
+            }
         }
 
         private void MainDrawPB_MouseClick(object sender, MouseEventArgs e)
@@ -772,6 +791,34 @@ namespace TobiTools
 
             //Console.WriteLine("dist:" + distance.ToString() + " angle:" + degrees.ToString());
             AddSlaveToObjectList((float)degrees, distance);
+        }
+
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int entry = -1;
+            if (EntriesDGV.CurrentRow.Tag != null)
+                entry = (int)EntriesDGV.CurrentRow.Tag;
+
+            if (MessageBox.Show("You are about to delete all entry(" + entry + "). Are you sure?", "Confirmation", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) != DialogResult.OK)
+                return;
+
+                DeleteEntriesRow(entry, EntriesDGV.CurrentRow.Index);
+
+            EntriesDGV.Rows.Remove(EntriesDGV.CurrentRow);
+        }
+
+        private void rotateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FormationDataEntry dataEntry = new FormationDataEntry(CurrentSelectedEntry);
+            SlaveRotationForm sRF = new SlaveRotationForm(this, dataEntry);
+
+            if (sRF.ShowDialog() == DialogResult.OK)
+            {
+                CurrentSelectedEntry = dataEntry;
+                FormationDataMgr.EditEntry(dataEntry);
+            }
+
+            ShowEntry(dataEntry.Entry);
         }
     }
 }

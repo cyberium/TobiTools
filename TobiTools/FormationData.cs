@@ -8,7 +8,7 @@ using System.IO;
 
 namespace TobiTools
 {
-    class SlaveDataEntry
+    public class SlaveDataEntry
     {
         public int ID;
         public float Distance;
@@ -26,9 +26,16 @@ namespace TobiTools
             Distance = 0;
             Angle = 0;
         }
+
+        public SlaveDataEntry(SlaveDataEntry sEntry)
+        {
+            ID = sEntry.ID;
+            Angle = sEntry.Angle;
+            Distance = sEntry.Distance;
+        }
     }
 
-    class FormationDataEntry
+    public class FormationDataEntry
     {
         public int Entry;
         public float MasterX;
@@ -48,6 +55,21 @@ namespace TobiTools
             slaveEntries = new List<SlaveDataEntry>();
 
             GeneratedIDs = 1;
+        }
+        public FormationDataEntry(FormationDataEntry dataEntry)
+        {
+            Entry = dataEntry.Entry;
+            MasterX = dataEntry.MasterX;
+            MasterY = dataEntry.MasterY;
+            MasterO = dataEntry.MasterO;
+            slaveEntries = new List<SlaveDataEntry>();
+
+            foreach(SlaveDataEntry sEntry in dataEntry.slaveEntries)
+            {
+                slaveEntries.Add(new SlaveDataEntry(sEntry));
+            }
+
+            GeneratedIDs = dataEntry.GeneratedIDs;
         }
 
         public FormationDataEntry()
@@ -186,6 +208,18 @@ namespace TobiTools
                     row.MasterX = masterX;
                     row.MasterY = masterY;
                     row.MasterO = masterO;
+                    return;
+                }
+            }
+        }
+
+        public void EditEntry(FormationDataEntry dataEntry)
+        {
+            for (int i = 0; i < dataList.Count; ++i)
+            {
+                if (dataList[i].Entry == dataEntry.Entry)
+                {
+                    dataList[i] = dataEntry;
                     return;
                 }
             }

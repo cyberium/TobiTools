@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.xOriginTBX = new System.Windows.Forms.TextBox();
             this.yOriginTBX = new System.Windows.Forms.TextBox();
             this.zOriginTBX = new System.Windows.Forms.TextBox();
@@ -61,12 +62,16 @@
             this.ExportSqlBut = new System.Windows.Forms.Button();
             this.MainDataDGV = new System.Windows.Forms.DataGridView();
             this.MainDrawPB = new System.Windows.Forms.PictureBox();
+            this.EntriesMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rotateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).BeginInit();
+            this.EntriesMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // xOriginTBX
@@ -358,6 +363,7 @@
             // EntriesDGV
             // 
             this.EntriesDGV.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.EntriesDGV.ContextMenuStrip = this.EntriesMenu;
             this.EntriesDGV.Location = new System.Drawing.Point(596, 22);
             this.EntriesDGV.Name = "EntriesDGV";
             this.EntriesDGV.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -410,6 +416,28 @@
             this.MainDrawPB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainDrawPB_MouseClick);
             this.MainDrawPB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDrawPB_MouseMove);
             // 
+            // EntriesMenu
+            // 
+            this.EntriesMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteToolStripMenuItem,
+            this.rotateToolStripMenuItem});
+            this.EntriesMenu.Name = "EntriesMenu";
+            this.EntriesMenu.Size = new System.Drawing.Size(185, 70);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.deleteToolStripMenuItem.Text = "Delete selected entry";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // rotateToolStripMenuItem
+            // 
+            this.rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+            this.rotateToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.rotateToolStripMenuItem.Text = "Rotate selected entry";
+            this.rotateToolStripMenuItem.Click += new System.EventHandler(this.rotateToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -429,6 +457,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.EntriesDGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDataDGV)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MainDrawPB)).EndInit();
+            this.EntriesMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -468,6 +497,9 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.DataGridView EntriesDGV;
         private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.ContextMenuStrip EntriesMenu;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotateToolStripMenuItem;
     }
 }
 
