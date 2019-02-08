@@ -8,7 +8,7 @@ using System.IO;
 
 namespace TobiTools
 {
-    struct SlaveDataEntry
+    class SlaveDataEntry
     {
         public int ID;
         public float Distance;
@@ -19,6 +19,12 @@ namespace TobiTools
             ID = id;
             Distance = distance;
             Angle = angle;
+        }
+        public SlaveDataEntry()
+        {
+            ID = -1;
+            Distance = 0;
+            Angle = 0;
         }
     }
 
@@ -70,16 +76,18 @@ namespace TobiTools
                     }
                 }
 
-                if (GeneratedIDs < id)
+                if (GeneratedIDs <= id)
                     GeneratedIDs = id + 1;
             }
+            else
+                id = GeneratedIDs++;
 
-            SlaveDataEntry newSlave = new SlaveDataEntry(GeneratedIDs++, angle, distance);
+            SlaveDataEntry newSlave = new SlaveDataEntry(id, angle, distance);
             slaveEntries.Add(newSlave);
             return newSlave;
         }
 
-        public void RemoveSlave(int id)
+        public void RemoveSlave(int id, bool fixIDs = true)
         {
             foreach (SlaveDataEntry row in slaveEntries)
             {
@@ -88,6 +96,16 @@ namespace TobiTools
                     slaveEntries.Remove(row);
                     break;
                 }
+            }
+
+            if (!fixIDs)
+                return;
+
+            // fix ids orders
+            GeneratedIDs = 1;
+            for(int i = 0; i < slaveEntries.Count; ++i)
+            {
+                slaveEntries[i].ID = GeneratedIDs++;
             }
         }
 
@@ -105,7 +123,7 @@ namespace TobiTools
             }
         }
 
-        public SlaveDataEntry? GetSlave(int id)
+        public SlaveDataEntry GetSlave(int id)
         {
             foreach (SlaveDataEntry row in slaveEntries)
             {
@@ -266,7 +284,7 @@ namespace TobiTools
             return null;
         }
 
-        public SlaveDataEntry? GetSlave(int entry, int slaveId)
+        public SlaveDataEntry GetSlave(int entry, int slaveId)
         {
             foreach (FormationDataEntry row in dataList)
             {

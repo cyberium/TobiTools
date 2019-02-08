@@ -41,7 +41,6 @@ namespace TobiTools
         static int ClientRatio = 10;
         Size VirtualClientSize;
 
-        int BaseID = 1;
         public Form1()
         {
             InitializeComponent();
@@ -91,9 +90,6 @@ namespace TobiTools
             MainDataDGV.Columns[0].Width = 40;
             MainDataDGV.Columns[1].Width = 60;
             MainDataDGV.Columns[2].Width = 60;
-
-            MainDataDGV.Rows[0].Cells[0].Value = MainDataDGV.Rows.Count;
-            MainDataDGV.Rows[0].Tag = BaseID++ ;
 
             MainDataDGV.Columns[0].ReadOnly = true;
 
@@ -285,19 +281,19 @@ namespace TobiTools
             return v;
         }
 
-        private void AddObject(DataGridViewRow currRow, float angle, float dist)
+        private void AddObject(DataGridViewRow currRow, SlaveDataEntry slaveEntry)
         {
             Slave slave = null;
             Object obj = null;
 
-            int idx = (int)currRow.Tag;
-            if (!ObjectsList.TryGetValue(idx, out obj))
+            currRow.Tag = slaveEntry.ID;
+            if (!ObjectsList.TryGetValue(slaveEntry.ID, out obj))
                 slave = new Slave(VirtualClientSize);
             else
                 slave = obj as Slave;
 
-            Vector2 orig = new Vector2(0, dist * ClientRatio);
-            Vector2 rotPos = Rotate(orig, angle);
+            Vector2 orig = new Vector2(0, slaveEntry.Distance * ClientRatio);
+            Vector2 rotPos = Rotate(orig, slaveEntry.Angle);
             Vector2 finalPoint = rotPos;
 
             int x, y;
@@ -310,7 +306,7 @@ namespace TobiTools
 
             slave.SetLinkedRow(currRow);
             if (obj == null)
-                ObjectsList.Add(idx, slave);
+                ObjectsList.Add(slaveEntry.ID, slave);
 
             MainDrawPB.Invalidate();
         }
@@ -389,8 +385,8 @@ namespace TobiTools
                 foreach (DataGridViewCell cell in currRow.Cells)
                     cell.Style.BackColor = Color.Green;
 
-                AddObject(currRow, angle, dist);
-                CurrentSelectedEntry.AddSlave(angle, dist);
+                SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, dist);
+                AddObject(currRow, slaveEntry);
             }
             else
             {
@@ -425,6 +421,8 @@ namespace TobiTools
         {
             RemoveObject((int)e.Row.Tag);
 
+            FormationDataMgr.RemoveSlave(CurrentSelectedEntry.Entry, (int) e.Row.Tag);
+
             int rowFound = 1;
             foreach(DataGridViewRow row in MainDataDGV.Rows)
             {
@@ -441,7 +439,6 @@ namespace TobiTools
         private void MainDataDGV_UserAddedRow(object sender, DataGridViewRowEventArgs e)
         {
             e.Row.Cells[0].Value = MainDataDGV.Rows.Count;
-            e.Row.Tag = BaseID++;
         }
 
         private void MainDrawPB_MouseMove(object sender, MouseEventArgs e)
@@ -499,8 +496,8 @@ namespace TobiTools
 
                 int rowIndex = MainDataDGV.Rows.Add(slaveEntry.ID.ToString(), angleResultTBX.Text, distResultTBX.Text);
                 DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
-                currRow.Tag = BaseID++;
-                AddObject(currRow, angle, dist);
+                currRow.Tag = slaveEntry.ID;
+                AddObject(currRow, slaveEntry);
                 MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = MainDataDGV.Rows.Count;
 
                 foreach (DataGridViewCell cell in currRow.Cells)
@@ -682,8 +679,8 @@ namespace TobiTools
                 {
                     int rowIndex = MainDataDGV.Rows.Add(slave.ID.ToString(), slave.Angle.ToString(), slave.Distance.ToString());
                     DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
-                    currRow.Tag = BaseID++;
-                    AddObject(currRow, slave.Angle, slave.Distance);
+                    currRow.Tag = slave.ID;
+                    AddObject(currRow, slave);
 
                     foreach (DataGridViewCell cell in currRow.Cells)
                         cell.Style.BackColor = Color.Green;
@@ -691,7 +688,6 @@ namespace TobiTools
             }
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = slaves.Count + 1;
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Style.BackColor = Color.LawnGreen;
-            MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Tag = BaseID++;
         }
 
         private void EntriesDGV_RowStateChanged(object sender, DataGridViewRowStateChangedEventArgs e)
