@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.xOriginTBX = new System.Windows.Forms.TextBox();
             this.yOriginTBX = new System.Windows.Forms.TextBox();
             this.zOriginTBX = new System.Windows.Forms.TextBox();
@@ -62,7 +61,6 @@
             this.ExportSqlBut = new System.Windows.Forms.Button();
             this.MainDataDGV = new System.Windows.Forms.DataGridView();
             this.MainDrawPB = new System.Windows.Forms.PictureBox();
-            this.MainTimer = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -409,12 +407,8 @@
             this.MainDrawPB.TabIndex = 0;
             this.MainDrawPB.TabStop = false;
             this.MainDrawPB.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDrawPB_Paint);
+            this.MainDrawPB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainDrawPB_MouseClick);
             this.MainDrawPB.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDrawPB_MouseMove);
-            // 
-            // MainTimer
-            // 
-            this.MainTimer.Enabled = true;
-            this.MainTimer.Tick += new System.EventHandler(this.MainTimer_Tick);
             // 
             // Form1
             // 
@@ -468,7 +462,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.PictureBox MainDrawPB;
-        private System.Windows.Forms.Timer MainTimer;
         private System.Windows.Forms.Button ExportSqlBut;
         private System.Windows.Forms.DataGridView MainDataDGV;
         private System.Windows.Forms.Button button3;

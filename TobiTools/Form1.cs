@@ -402,6 +402,19 @@ namespace TobiTools
         private void MainDrawPB_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.Clear(MainDrawPB.BackColor);
+            Pen p = new Pen(Color.DarkGreen);
+
+            for (int x = 0; x < MainDrawPB.ClientSize.Width;)
+            {
+                e.Graphics.DrawLine(p, x, 0, x, MainDrawPB.ClientSize.Height);
+                x += 10;
+            }
+
+            for (int x = 0; x < MainDrawPB.ClientSize.Height;)
+            {
+                e.Graphics.DrawLine(p, 0, x, MainDrawPB.ClientSize.Height, x);
+                x += 10;
+            }
 
             foreach (var item in ObjectsList)
             {
@@ -476,6 +489,22 @@ namespace TobiTools
             MainDrawPB.Invalidate();
         }
 
+        private void AddSlaveToObjectList(float angle, float distance)
+        {
+            SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, distance);
+
+            int rowIndex = MainDataDGV.Rows.Add(slaveEntry.ID.ToString(), angleResultTBX.Text, distResultTBX.Text);
+            DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
+            currRow.Tag = slaveEntry.ID;
+            AddObject(currRow, slaveEntry);
+            MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = MainDataDGV.Rows.Count;
+            currRow.Cells[1].Value = angle.ToString();
+            currRow.Cells[2].Value = distance.ToString();
+
+            foreach (DataGridViewCell cell in currRow.Cells)
+                cell.Style.BackColor = Color.Green;
+        }
+
         private void button3_Click(object sender, EventArgs e)
         {
             float angle, dist;
@@ -496,16 +525,7 @@ namespace TobiTools
                     item.Value.SetBaseGamePos(CurrentSelectedEntry.MasterX, CurrentSelectedEntry.MasterY, CurrentSelectedEntry.MasterO);
                 }
 
-                SlaveDataEntry slaveEntry = CurrentSelectedEntry.AddSlave(angle, dist);
-
-                int rowIndex = MainDataDGV.Rows.Add(slaveEntry.ID.ToString(), angleResultTBX.Text, distResultTBX.Text);
-                DataGridViewRow currRow = MainDataDGV.Rows[rowIndex];
-                currRow.Tag = slaveEntry.ID;
-                AddObject(currRow, slaveEntry);
-                MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = MainDataDGV.Rows.Count;
-
-                foreach (DataGridViewCell cell in currRow.Cells)
-                    cell.Style.BackColor = Color.Green;
+                AddSlaveToObjectList(angle, dist);
 
             }
         }
@@ -727,6 +747,31 @@ namespace TobiTools
             }
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Value = slaves.Count + 1;
             MainDataDGV.Rows[MainDataDGV.Rows.Count - 1].Cells[0].Style.BackColor = Color.LawnGreen;
+        }
+
+        private void MainDrawPB_MouseClick(object sender, MouseEventArgs e)
+        {
+            double ratio = ClientRatio / 2;
+            int tx = Convert.ToInt32(Math.Round(e.X / ratio) * ratio);
+            int ty = Convert.ToInt32(Math.Round(e.Y / ratio) * ratio);
+            int x = tx - MainDrawPB.ClientSize.Width / 2;
+            int y = -(ty - MainDrawPB.ClientSize.Height / 2);
+
+            Vector2 origin = new Vector2(0, 0);
+            Vector2 dest = new Vector2(x, y);
+
+            float distance = Vector2.Distance(origin, dest) /(float) ClientRatio;
+
+            //double angle = Math.PI - Math.Atan2(origin.Y - dest.Y, origin.X - dest.X) + (Math.PI / 2);
+            double angle = Math.Atan2(origin.Y - dest.Y, origin.X - dest.X) + (Math.PI / 2);
+            double degrees = ((180 / Math.PI) * angle);
+            degrees = (degrees + 360) % 360;
+
+            degrees = (float)(Math.Round((double)degrees, 3));
+            distance = (float)(Math.Round((double)distance, 3));
+
+            //Console.WriteLine("dist:" + distance.ToString() + " angle:" + degrees.ToString());
+            AddSlaveToObjectList((float)degrees, distance);
         }
     }
 }
